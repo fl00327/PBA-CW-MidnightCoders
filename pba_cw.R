@@ -8,3 +8,5 @@ cat("\014")
 set.seed(1234)
 
 # Write your Code Here
+
+# Pre processing
