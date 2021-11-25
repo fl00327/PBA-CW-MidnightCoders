@@ -155,7 +155,7 @@ print(paste("r^2 with gestation_weeks + weight_gain_pounds added=",r2))
 
 
 #Linear model with 2 or more predictors
-linearModelTransform2Inputs<-lm(weight_pounds~mother_age+cigarette_use,data=training_data)
+linearModelTransform2Inputs<-lm(weight_pounds~mother_age+gestation_weeks,data=training_data)
 r2<-round(Nr2(linearModelTransform2Inputs),digits=2)
 print(paste("r^2 with mother_age + cigarette_use=",r2))
 
@@ -209,6 +209,7 @@ nonlinearModel<-lm(weight_pounds~polym(gestation_weeks,weight_gain_pounds,mother
 
 r2<-round(Nr2(nonlinearModel),digits=2) 
 print(paste("Non Linear Regression: r^2 with lstat+age+rm=",r2))
+
 
 
 NscatterPlotNonLinearRegression(datasetTrain = training_data,

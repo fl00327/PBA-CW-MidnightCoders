@@ -1,5 +1,10 @@
+#  clears all objects in "global environment"
+rm(list=ls())
+
+
 DATASET_FILENAME  <- "Natality_Preprocessed"          #Name of input dataset file
-OUTPUT_FIELD      <- "weight_pounds"             # Field name of the output class to predict
+OUTPUT_FIELD      <- "weightpounds"             # Field name of the output class to predict
+
 
 # These are the data preparation values
 
@@ -63,6 +68,7 @@ library(pacman)
 pacman::p_load(char=MYLIBRARIES,install=TRUE,character.only=TRUE)
 
 library(keras)
+install_keras()
 
 #Load additional R script files provide for this lab
 source("4labFunctions.R")
@@ -264,6 +270,8 @@ deepNeural<-function(train, test, plot = TRUE){
 main<-function(){
   
   loans <- NreadDataset(DATASET_FILENAME)
+  
+  
   original<-NConvertClass(loans)
   original<-NPREPROCESSING_splitdataset(original)
   
@@ -330,13 +338,10 @@ main()
 
 print("end")
 
-
-loans <- read.csv(DATASET_FILENAME)
-
+loans <- NreadDataset(DATASET_FILENAME)
 
 original<-NConvertClass(loans)
-loans<-loans[,-(1)]
-original<-NPREPROCESSING_splitdataset(original)
+original<-NPREPROCESSING_splitdataset(loans)
 
 measures<-simpleDT(original$train, original$test)
 allResults<-data.frame(DT_raw=unlist(measures))
@@ -348,21 +353,20 @@ allResults<-cbind(allResults, data.frame(DT_preprocess=unlist(measures)))
 
 dataset<-NPREPROCESSING_dataset(loans, scaleFlag = TRUE)
 
-splitData<-NPREPROCESSING_splitdataset(loans)
+splitData<-NPREPROCESSING_splitdataset(dataset)
 
 #naturalClassBalance<-2/100
 #measures<-metricsToRealWorld(dataset = dataset, measures = measures, natural = naturalClassBalance)
 
 
 
-measures<-randomForest(train=splitData$train, test = splitData$test)
+measures<-randomForest(train=original$train, test = original$test)
 allResults<-cbind(allResults, data.frame(RandomForest=unlist(measures)))
 
-
-measures<-mlpNeural(train=splitData$train, test=splitData$test)
+measures<-mlpNeural(train=original$train, test=original$test)
 allResults<-cbind(allResults, data.frame(MLP=unlist(measures)))
 
-measures<-deepNeural(train=splitData$train, test=splitData$test)
+measures<-deepNeural(train=original$train, test=original$test)
 allResults<-cbind(allResults, data.frame(Deep_Neural=unlist(measures)))
 
 #Swapping columns to rows, rows to column
@@ -373,5 +377,4 @@ allResults<-allResults[order(allResults$MCC, decreasing = TRUE),]
 #Printing out results and formatting them and storing them into a csv file
 print(formattable::formattable(allResults))
 write.csv(allResults,file = RESULTS_FILENAME)
-
 
